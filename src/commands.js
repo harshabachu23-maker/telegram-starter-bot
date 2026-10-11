@@ -2,6 +2,7 @@
 // keyboards, sessions, files, inline queries and everything else.
 
 import { InlineKeyboard } from "grammy"
+const ANIME_API = "https://api.jikan.moe/v4/anime"
 
 export function registerCommands(bot) {
   bot.command("start", (ctx) =>
