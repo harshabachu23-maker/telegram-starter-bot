@@ -11,7 +11,7 @@ export function registerCommands(bot) {
   )
 
   bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
+    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send an anime name to search for anime.."].join("\n")),
   )
 
   bot.command("ping", (ctx) => ctx.reply("pong"))
