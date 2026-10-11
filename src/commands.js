@@ -5,20 +5,32 @@ import { InlineKeyboard } from "grammy"
 
 export function registerCommands(bot) {
   bot.command("start", (ctx) =>
-    ctx.reply(`Hi ${ctx.from?.first_name ?? "there"}. I am alive and hosted on FadeHost. Send /help to see what I can do.`, {
-      reply_markup: new InlineKeyboard().text("Ping me", "ping"),
-    }),
+    ctx.reply(
+      "Welcome to Anime Finder! 🎌\n\nSend an anime name to search for it.\n\nExample: Naruto"
+    )
   )
 
   bot.command("help", (ctx) =>
-    ctx.reply(["Commands:", "/start  say hello", "/help   this list", "/ping   check I am awake", "/id     show chat and user ids", "", "Send me any text and I echo it back."].join("\n")),
+    ctx.reply(
+      "🎌 Anime Finder Help\n\nSend an anime name to search.\nUse /ping to test the bot."
+    )
   )
 
-  bot.command("ping", (ctx) => ctx.reply("pong"))
+  bot.command("ping", (ctx) => ctx.reply("pong 🏓"))
 
-  bot.command("id", (ctx) => ctx.reply(`Chat id: ${ctx.chat.id}\nYour id: ${ctx.from?.id ?? "unknown"}`))
-
-  bot.callbackQuery("ping", (ctx) => ctx.answerCallbackQuery({ text: "pong" }))
-
-  bot.on("message:text", (ctx) => ctx.reply(ctx.message.text))
+  bot.on("message:text", async (ctx) => {
+    const query = ctx.message.text.trim()
+    if (query.startsWith("/")) return
+    try {
+      const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=3`)
+      if (!response.ok) return ctx.reply("Search is busy. Please try again.")
+      const result = await response.json()
+      if (!result.data?.length) return ctx.reply("No anime found. Try another name.")
+      for (const anime of result.data) {
+        await ctx.reply(`🎌 ${anime.title}\n⭐ Score: ${anime.score ?? "N/A"}\n📺 Episodes: ${anime.episodes ?? "Unknown"}\n🔗 ${anime.url}`)
+      }
+    } catch (error) {
+      await ctx.reply("Search failed. Please try again later.")
+    }
+  })
 }
